@@ -1,0 +1,35 @@
+= form_with(model: recipe, class: "contents") do |form|
+  - if recipe.errors.any?
+    #error_explanation.bg-red-50.text-red-500.px-3.py-2.font-medium.rounded-md.mt-3
+      %h2
+        = pluralize(recipe.errors.count, "error")
+        prohibited this recipe from being saved:
+      %ul.list-disc.ml-6
+        - recipe.errors.each do |error|
+          %li= error.full_message
+  .my-5
+    = form.label :title
+    = form.text_field :title, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:title].none?, "border-red-400 focus:outline-red-600": recipe.errors[:title].any?}]
+  .my-5
+    = form.label :instructions
+    = form.textarea :instructions, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:instructions].none?, "border-red-400 focus:outline-red-600": recipe.errors[:instructions].any?}]
+  .my-5
+    = form.label :cook_time
+    = form.number_field :cook_time, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:cook_time].none?, "border-red-400 focus:outline-red-600": recipe.errors[:cook_time].any?}]
+  .my-5
+    = form.label :prep_time
+    = form.number_field :prep_time, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:prep_time].none?, "border-red-400 focus:outline-red-600": recipe.errors[:prep_time].any?}]
+  .my-5
+    = form.label :image_url
+    = form.text_field :image_url, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:image_url].none?, "border-red-400 focus:outline-red-600": recipe.errors[:image_url].any?}]
+  .my-5
+    = form.label :rating
+    = form.text_field :rating, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:rating].none?, "border-red-400 focus:outline-red-600": recipe.errors[:rating].any?}]
+  .my-5
+    = form.label :category
+    = form.text_field :category, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:category].none?, "border-red-400 focus:outline-red-600": recipe.errors[:category].any?}]
+  .my-5
+    = form.label :author
+    = form.text_field :author, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:author].none?, "border-red-400 focus:outline-red-600": recipe.errors[:author].any?}]
+  .inline
+    = form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer"

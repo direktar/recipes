@@ -1,9 +1,15 @@
 class RecipesController < ApplicationController
+  include Pagy::Backend
+
   before_action :set_recipe, only: %i[ show edit update destroy ]
 
   # GET /recipes or /recipes.json
   def index
-    @recipes = Recipe.all
+    @pagy, @recipes = pagy(
+      Recipe
+        .includes(:recipe_ingredients)
+        .order(created_at: :desc)
+    )
   end
 
   # GET /recipes/1 or /recipes/1.json

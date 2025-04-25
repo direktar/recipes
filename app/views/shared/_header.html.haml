@@ -1,0 +1,33 @@
+/ app/views/shared/_header.html.haml
+%header.bg-gray-800.text-white.shadow
+  .container.mx-auto.flex.h-14.items-center.justify-between.px-4
+
+    /––– Brand / Home –––––––––––––––––––––––––––––––––––––––––
+    = link_to root_path, class: "text-xl font-semibold hover:text-indigo-400" do
+      Recipes
+
+    /––– Right side – user menu or auth links ––––––––––––––––
+    - if user_signed_in?
+      .relative
+        %button#userMenuBtn.flex.items-center.space-x-2.font-medium.transition.hover:text-indigo-400
+          %span= current_user.email
+          %svg{xmlns:"http://www.w3.org/2000/svg", fill:"none", viewBox:"0 0 24 24", stroke:"currentColor", class:"h-4 w-4"}
+            %path{strokeLinecap:"round", strokeLinejoin:"round", strokeWidth:"2", d:"M19 9l-7 7-7-7"}
+
+        / Dropdown (hidden by default – toggled via Stimulus or simple JS)
+        %div#userMenu.hidden.absolute.right-0.mt-2.w-48.rounded-md.bg-white.text-gray-800.shadow-lg
+          = link_to "Profile",   edit_user_registration_path,
+                    class: "block px-4 py-2 hover:bg-gray-100"
+          = link_to "My pantry", pantry_path,
+                    class: "block px-4 py-2 hover:bg-gray-100"
+
+          %hr.border-t
+          = link_to "Log out", destroy_user_session_path, data: {turbo_method: :delete},
+                    class: "block px-4 py-2 hover:bg-gray-100 text-red-600"
+
+    - else
+      .space-x-4
+        = link_to "Log in", new_user_session_path,
+                  class: "rounded border border-indigo-500 px-4 py-1 font-medium text-indigo-500 transition hover:bg-indigo-500 hover:text-white"
+        = link_to "Sign up", new_user_registration_path,
+                  class: "rounded bg-indigo-600 px-4 py-1 font-medium text-white transition hover:bg-indigo-500"

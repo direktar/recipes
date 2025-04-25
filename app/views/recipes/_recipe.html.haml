@@ -1,0 +1,26 @@
+.w-full.sm:w-auto.my-5.space-y-5{:id => "#{dom_id recipe}"}
+  %div
+    %strong.block.font-medium.mb-1 Title:
+    %h3= recipe.title
+  %div
+    %strong.block.font-medium.mb-1 Instructions:
+    %p= truncate(recipe.instructions, length: 120)
+  %div
+    %strong.block.font-medium.mb-1 Cook time:
+    = recipe.cook_time
+  %div
+    %strong.block.font-medium.mb-1 Prep time:
+    = recipe.prep_time
+  %div
+    %strong.block.font-medium.mb-1 Image url:
+    -# = recipe.image_url
+    %img{ src: recipe.image_url, loading: "lazy", width: 200 }
+  %div
+    %strong.block.font-medium.mb-1 Rating:
+    = recipe.rating
+  %div
+    %strong.block.font-medium.mb-1 Category:
+    = recipe.category
+  %div
+    %strong.block.font-medium.mb-1 Ingredients:
+    = recipe.recipe_ingredients.map(&:raw_text).join(', ')

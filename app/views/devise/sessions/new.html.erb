@@ -1,0 +1,58 @@
+<!-- app/views/devise/sessions/new.html.erb -->
+<main class="mx-auto flex min-h-screen w-full items-center justify-center bg-gray-900 text-white">
+  <section class="flex w-[30rem] flex-col space-y-10">
+
+    <h2 class="text-center text-4xl font-medium">Log In</h2>
+
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name),
+                 html: { class: "flex flex-col space-y-8" }) do |f| %>
+
+      <!-- Email -->
+      <div class="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500">
+        <%= f.email_field :email,
+                          autofocus: true,
+                          autocomplete: "email",
+                          placeholder: "Email",
+                          class: "w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none" %>
+      </div>
+
+      <!-- Password -->
+      <div class="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500">
+        <%= f.password_field :password,
+                             autocomplete: "current-password",
+                             placeholder: "Password",
+                             class: "w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none" %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+        <div class="flex items-center justify-start space-x-2 text-sm text-gray-400">
+          <%= f.check_box :remember_me, id: "remember_me", class: "h-4 w-4 rounded border-gray-300 bg-gray-700 text-indigo-600 focus:ring-indigo-500" %>
+          <%= f.label :remember_me, for: "remember_me" %>
+        </div>
+      <% end %>
+
+      <!-- Submit -->
+      <%= f.submit "LOG IN",
+                   class: "transform rounded-sm bg-indigo-600 py-2 font-bold duration-300 hover:bg-indigo-400" %>
+
+    <% end %>
+
+    <!-- Forgot password -->
+    <% if devise_mapping.recoverable? %>
+      <%= link_to "FORGOT PASSWORD?",
+                  new_password_path(resource_name),
+                  class: "transform text-center font-semibold text-gray-500 duration-300 hover:text-gray-300" %>
+    <% end %>
+
+    <!-- Sign‑up link -->
+    <% if devise_mapping.registerable? %>
+      <p class="text-center text-lg">
+        No account?
+        <%= link_to "Create One",
+                    new_registration_path(resource_name),
+                    class: "font-medium text-indigo-500 underline-offset-4 hover:underline" %>
+      </p>
+    <% end %>
+
+  </section>
+</main>
