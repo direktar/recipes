@@ -32,6 +32,7 @@ group :development, :test do
   gem "brakeman", require: false
 
   gem "rubocop-rails-omakase", require: false
+  gem "rspec", "~> 3.13"
 end
 
 group :development do
@@ -46,6 +47,5 @@ end
 
 group :test do
   gem "capybara"
-  gem "rspec", "~> 3.13"
   gem "selenium-webdriver"
 end
