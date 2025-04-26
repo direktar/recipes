@@ -1,0 +1,29 @@
+- content_for :title, "My Pantry"
+
+.max-w-4xl.mx-auto.py-8.px-4.sm:px-6.lg:px-8
+  .flex.justify-between.items-center.mb-6
+    %h1.text-2xl.font-bold.text-gray-800 My Pantry
+    = link_to recipes_path, class: "text-indigo-600 hover:text-indigo-800 flex items-center gap-1" do
+      %svg.h-5.w-5{xmlns: "http://www.w3.org/2000/svg", fill: "none", viewbox: "0 0 24 24", stroke: "currentColor"}
+        %path{stroke: "currentColor", 'stroke-linecap': "round", 'stroke-linejoin': "round", 'stroke-width': "2", d: "M10 19l-7-7m0 0l7-7m-7 7h18"}
+      Back to recipes
+
+  #flash
+    - flash.each do |type, message|
+      .flash{class: "flash-#{type}"}
+        = message
+
+  .bg-white.shadow.rounded-lg.overflow-hidden.mb-6
+    .p-6
+      .mb-6
+        %h2.text-xl.font-semibold.text-gray-800.mb-4 Add New Ingredient
+        = render "form", user_ingredient: @user_ingredient
+
+      %h2.text-xl.font-semibold.text-gray-800.mb-4 My Ingredients
+      = link_to my_ingredients_recipes_path, class: "mb-6 inline-block px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition" do
+        %svg.inline-block.h-4.w-4.mr-1{xmlns: "http://www.w3.org/2000/svg", fill: "none", viewbox: "0 0 24 24", stroke: "currentColor"}
+          %path{stroke: "currentColor", 'stroke-linecap': "round", 'stroke-linejoin': "round", 'stroke-width': "2", d: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"}
+        Find recipes with my ingredients
+
+      = turbo_frame_tag "user_ingredients" do
+        = render "list", user_ingredients: @user_ingredients

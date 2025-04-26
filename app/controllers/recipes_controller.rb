@@ -5,16 +5,61 @@ class RecipesController < ApplicationController
 
   # GET /recipes or /recipes.json
   def index
-    @pagy, @recipes = pagy(
-      Recipe
-        .includes(:recipe_ingredients)
-        .order(created_at: :desc)
-    )
+    @recipes = Recipe.all.includes(:ingredients)
+
+    if params[:query].present?
+      ingredients = params[:query].split(',').map(&:strip).reject(&:blank?)
+
+      if ingredients.any?
+        @recipes = ingredients.inject(@recipes) do |scope, ingredient|
+          scope.joins(:ingredients)
+               .where("
+               ingredients.name ILIKE ? OR
+               ingredients.name ILIKE ? OR
+               ingredients.name ILIKE ? OR
+               ingredients.name ILIKE ?
+             ",
+               ingredient,
+               "#{ingredient} %",
+               "% #{ingredient}",
+               "% #{ingredient} %"
+          )
+        end.distinct
+      end
+    end
+
+    @pagy, @recipes = pagy(@recipes)
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
+
+  # GET /recipes/my_ingredients
+  def my_ingredients
+    @recipes = Recipe.find_by_user_ingredients(current_user)
+
+    if @recipes.empty?
+      flash.now[:notice] = "You don't have enough ingredients to make any recipes. Add more ingredients to your pantry!"
+    end
+
+    @pagy, @recipes = pagy(@recipes)
+    respond_to do |format|
+      format.html { render :index }
+      format.turbo_stream { render :index }
+    end
+  end
+
 
   # GET /recipes/1 or /recipes/1.json
   def show
+    respond_to do |format|
+      format.html
+      format.json { render :show }
+    end
   end
+
 
   # GET /recipes/new
   def new
@@ -64,13 +109,13 @@ class RecipesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_recipe
-      @recipe = Recipe.find(params.expect(:id))
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_recipe
+    @recipe = Recipe.find(params.require(:id))
+  end
 
-    # Only allow a list of trusted parameters through.
-    def recipe_params
-      params.expect(recipe: [ :title, :instructions, :cook_time, :prep_time, :image_url, :rating, :category, :author ])
-    end
+  # Only allow a list of trusted parameters through.
+  def recipe_params
+    params.require(:recipe).permit(:title, :description, :instructions, :preparation_time, :difficulty)
+  end
 end

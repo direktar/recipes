@@ -1,61 +1,64 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
-
-# require 'json'
-User.destroy_all
-
 if Recipe.count == 0
-  file = File.read(Rails.root.join("db", "recipes-en.json"))
-  recipes = JSON.parse(file)
-
-  recipes.find_each do |data|
-    recipe = Recipe.create!(
-      title: data["title"],
-      prep_time: data["prep_time"],
-      cook_time: data["cook_time"],
-      image_url: data["image"],
-      rating: data["ratings"],
-      category: data["category"]
-    )
-
-    data["ingredients"].find_each do |ingredient_line|
-      name = ingredient_line.split(",").first.split(" ").last.downcase
-      ingredient = Ingredient.find_or_create_by(name: name)
-      RecipeIngredient.create!(recipe:, ingredient:, raw_text: ingredient_line)
-    end
-  end
+  puts "🥘 Importing recipes (this may take some time)..."
+  Rake::Task["recipes:import"].invoke rescue puts "⚠️ Recipe import failed, continuing with other seed data"
 end
+
+puts "🌱 Starting seed data generation..."
+
+puts "Cleaning up existing user data..."
+UserIngredient.destroy_all
+User.destroy_all
 
 DEMO_EMAIL = "demo@example.com"
 DEMO_PASS  = "password123"
 
-demo = User.find_or_initialize_by(email: DEMO_EMAIL)
-demo.password = DEMO_PASS
-demo.password_confirmation = DEMO_PASS
-demo.save!
+User.create!(
+  email: DEMO_EMAIL,
+  password: DEMO_PASS,
+  password_confirmation: DEMO_PASS
+)
 puts "✅ Demo user created: #{DEMO_EMAIL} / #{DEMO_PASS}"
 
-5.times do
-  email = FFaker::Internet.unique.email
-  pass  = "secret#{rand(1000..9999)}"
-  User.create!(email:, password: pass, password_confirmation: pass)
+5.times do |i|
+  email = "user#{i+1}@example.com"
+  password = DEMO_PASS
+
+  User.create!(
+    email: email,
+    password: password,
+    password_confirmation: password
+  )
+  puts "👤 Created random user: #{email} / #{password}"
 end
-puts "✅ Random users created: #{User.count - 1} extra"
 
 ingredient_ids = Ingredient.pluck(:id)
-abort "❌ Seed ingredients first!" if ingredient_ids.empty?
 
 User.find_each do |user|
-  sample_ids = ingredient_ids.sample(8)
-  sample_ids.each do |ing_id|
-    UserIngredient.find_or_create_by!(user_id: user.id, ingredient_id: ing_id)
+  num_ingredients = rand(50..70)
+
+  selected_ingredient_ids = ingredient_ids.sample(num_ingredients)
+
+  puts "🧪 Adding #{num_ingredients} ingredients to user #{user.email}..."
+
+  selected_ingredient_ids.each do |ingredient_id|
+    ingredient = Ingredient.find(ingredient_id)
+
+    quantity = rand(5..15)
+
+    units = ["cup", "tablespoon", "teaspoon", "gram", "kilogram", "ounce", "pound", nil]
+    unit = units.sample
+
+    user.add_ingredient(ingredient, quantity, unit)
+
+    puts "  - Added #{quantity} #{unit} of #{ingredient.name}"
   end
 end
-puts "✅ Pantry items assigned (8 per user)"
+
+total_users = User.count
+total_ingredients = Ingredient.count
+total_user_ingredients = UserIngredient.count
+
+puts "\n🎉 Seed completed successfully!"
+puts "📊 Summary:"
+puts "  - Users: #{total_users}"
+puts "  - Total ingredients: #{total_ingredients}"

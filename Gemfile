@@ -10,7 +10,7 @@ gem "stimulus-rails"
 gem "tailwindcss-rails"
 gem "jbuilder"
 gem "devise", "~> 4.9"
-gem 'pagy', '~> 6.1'
+gem "pagy", "~> 6.1"
 
 # gem "bcrypt", "~> 3.1.7"
 
@@ -35,15 +35,17 @@ group :development, :test do
 end
 
 group :development do
+  gem "annotaterb", "~> 4.13"
   gem "ffaker", "~> 2.24"
-  gem 'haml', '~> 6.3'
-  gem 'html2haml', '~> 2.2'
-  gem 'haml-rails', '~> 2.1'
+  gem "haml", "~> 6.3"
+  gem "html2haml", "~> 2.2"
+  gem "haml-rails", "~> 2.1"
   gem "rubocop", "~> 1.75", ">= 1.75.3"
   gem "web-console"
 end
 
 group :test do
   gem "capybara"
+  gem "rspec", "~> 3.13"
   gem "selenium-webdriver"
 end

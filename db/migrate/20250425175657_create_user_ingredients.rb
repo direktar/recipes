@@ -4,7 +4,6 @@ class CreateUserIngredients < ActiveRecord::Migration[8.0]
       t.references :user, null: false, foreign_key: true
       t.references :ingredient, null: false, foreign_key: true
       t.float :quantity
-      t.string :unit
 
       t.timestamps
     end

@@ -1,0 +1,3 @@
+= turbo_stream.replace "user_ingredients" do
+  = render "list", user_ingredients: current_user.user_ingredients.includes(:ingredient).order('ingredients.name')
+= render_turbo_stream_flash_messages

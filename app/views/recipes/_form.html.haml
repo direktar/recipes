@@ -1,35 +1,82 @@
-= form_with(model: recipe, class: "contents") do |form|
-  - if recipe.errors.any?
-    #error_explanation.bg-red-50.text-red-500.px-3.py-2.font-medium.rounded-md.mt-3
-      %h2
-        = pluralize(recipe.errors.count, "error")
-        prohibited this recipe from being saved:
-      %ul.list-disc.ml-6
-        - recipe.errors.each do |error|
-          %li= error.full_message
-  .my-5
-    = form.label :title
-    = form.text_field :title, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:title].none?, "border-red-400 focus:outline-red-600": recipe.errors[:title].any?}]
-  .my-5
-    = form.label :instructions
-    = form.textarea :instructions, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:instructions].none?, "border-red-400 focus:outline-red-600": recipe.errors[:instructions].any?}]
-  .my-5
-    = form.label :cook_time
-    = form.number_field :cook_time, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:cook_time].none?, "border-red-400 focus:outline-red-600": recipe.errors[:cook_time].any?}]
-  .my-5
-    = form.label :prep_time
-    = form.number_field :prep_time, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:prep_time].none?, "border-red-400 focus:outline-red-600": recipe.errors[:prep_time].any?}]
-  .my-5
-    = form.label :image_url
-    = form.text_field :image_url, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:image_url].none?, "border-red-400 focus:outline-red-600": recipe.errors[:image_url].any?}]
-  .my-5
-    = form.label :rating
-    = form.text_field :rating, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:rating].none?, "border-red-400 focus:outline-red-600": recipe.errors[:rating].any?}]
-  .my-5
-    = form.label :category
-    = form.text_field :category, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:category].none?, "border-red-400 focus:outline-red-600": recipe.errors[:category].any?}]
-  .my-5
-    = form.label :author
-    = form.text_field :author, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": recipe.errors[:author].none?, "border-red-400 focus:outline-red-600": recipe.errors[:author].any?}]
-  .inline
-    = form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer"
+= form_with(model: recipe, data: { controller: "ingredients", turbo: true }) do |form|
+  .p-6.space-y-6
+    = form.hidden_field :id
+
+    .flex.justify-between.items-center.mb-2
+      %h3.text-lg.font-medium.text-gray-900 Recipe Ingredients
+      %button{type: "button", class: "px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md flex items-center text-sm hover:bg-indigo-200", data: { action: "click->ingredients#addNewIngredient" }}
+        %svg.h-4.w-4.mr-1{xmlns: "http://www.w3.org/2000/svg", fill: "none", viewbox: "0 0 24 24", stroke: "currentColor"}
+          %path{stroke: "currentColor", 'stroke-linecap': "round", 'stroke-linejoin': "round", 'stroke-width': "2", d: "M12 6v6m0 0v6m0-6h6m-6 0H6"}
+        Add Ingredient
+
+    #ingredients-container.space-y-4{data: { ingredients_target: "container" }}
+      - if recipe.recipe_ingredients.any?
+        - recipe.recipe_ingredients.each do |recipe_ingredient|
+          .ingredient-row.bg-gray-50.rounded-md.p-4.relative{data: { id: recipe_ingredient.id }}
+            .absolute.top-2.right-2
+              %button{type: "button", class: "text-gray-400 hover:text-red-500", data: { action: "click->ingredients#removeIngredient" }}
+                %svg.h-5.w-5{xmlns: "http://www.w3.org/2000/svg", fill: "none", viewbox: "0 0 24 24", stroke: "currentColor"}
+                  %path{stroke: "currentColor", 'stroke-linecap': "round", 'stroke-linejoin': "round", 'stroke-width': "2", d: "M6 18L18 6M6 6l12 12"}
+
+            .grid.grid-cols-1.md:grid-cols-5.gap-4.items-start
+              .md:col-span-2
+                = label_tag "recipe[recipe_ingredients_attributes][#{recipe_ingredient.id}][ingredient_id]", "Ingredient", class: "block text-sm font-medium text-gray-700 mb-1"
+                = select_tag "recipe[recipe_ingredients_attributes][#{recipe_ingredient.id}][ingredient_id]",
+                              options_from_collection_for_select(Ingredient.all.order(:name), :id, :name, recipe_ingredient.ingredient_id),
+                              { include_blank: "Select ingredient", class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" }
+
+              .md:col-span-1
+                = label_tag "recipe[recipe_ingredients_attributes][#{recipe_ingredient.id}][quantity]", "Quantity", class: "block text-sm font-medium text-gray-700 mb-1"
+                = number_field_tag "recipe[recipe_ingredients_attributes][#{recipe_ingredient.id}][quantity]",
+                                  recipe_ingredient.quantity,
+                                  { step: 0.01, min: 0, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" }
+
+              .md:col-span-1
+                = label_tag "recipe[recipe_ingredients_attributes][#{recipe_ingredient.id}][unit]", "Unit", class: "block text-sm font-medium text-gray-700 mb-1"
+                = select_tag "recipe[recipe_ingredients_attributes][#{recipe_ingredient.id}][unit]",
+                              options_for_select(['cup', 'tablespoon', 'teaspoon', 'ounce', 'pound', 'gram', 'kilogram', 'milliliter', 'liter', 'pinch', 'slice', 'piece'], recipe_ingredient.unit),
+                              { include_blank: "Select unit", class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" }
+
+              .md:col-span-1
+                = label_tag "recipe[recipe_ingredients_attributes][#{recipe_ingredient.id}][notes]", "Notes", class: "block text-sm font-medium text-gray-700 mb-1"
+                = text_field_tag "recipe[recipe_ingredients_attributes][#{recipe_ingredient.id}][notes]",
+                                recipe_ingredient.notes,
+                                { class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500", placeholder: "Optional notes" }
+      - else
+        .text-center.py-6.text-gray-500.italic No ingredients added yet
+
+    .flex.justify-end.gap-3.pt-4
+      = link_to "Cancel", recipe.persisted? ? recipe_path(recipe) : recipes_path, class: "px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
+      = form.submit class: "px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
+
+  %template#ingredient-template{data: { ingredients_target: "template" }}
+    .ingredient-row.bg-gray-50.rounded-md.p-4.relative{data: { id: "_NEW_" }}
+      .absolute.top-2.right-2
+        %button{type: "button", class: "text-gray-400 hover:text-red-500", data: { action: "click->ingredients#removeIngredient" }}
+          %svg.h-5.w-5{xmlns: "http://www.w3.org/2000/svg", fill: "none", viewbox: "0 0 24 24", stroke: "currentColor"}
+            %path{stroke: "currentColor", 'stroke-linecap': "round", 'stroke-linejoin': "round", 'stroke-width': "2", d: "M6 18L18 6M6 6l12 12"}
+
+      .grid.grid-cols-1.md:grid-cols-5.gap-4.items-start
+        .md:col-span-2
+          = label_tag "recipe[recipe_ingredients_attributes][_NEW_][ingredient_id]", "Ingredient", class: "block text-sm font-medium text-gray-700 mb-1"
+          = select_tag "recipe[recipe_ingredients_attributes][_NEW_][ingredient_id]",
+                        options_from_collection_for_select(Ingredient.all.order(:name), :id, :name),
+                        { include_blank: "Select ingredient", class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 ingredient-select" }
+
+        .md:col-span-1
+          = label_tag "recipe[recipe_ingredients_attributes][_NEW_][quantity]", "Quantity", class: "block text-sm font-medium text-gray-700 mb-1"
+          = number_field_tag "recipe[recipe_ingredients_attributes][_NEW_][quantity]",
+                            nil,
+                            { step: 0.01, min: 0, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" }
+
+        .md:col-span-1
+          = label_tag "recipe[recipe_ingredients_attributes][_NEW_][unit]", "Unit", class: "block text-sm font-medium text-gray-700 mb-1"
+          = select_tag "recipe[recipe_ingredients_attributes][_NEW_][unit]",
+                        options_for_select(['cup', 'tablespoon', 'teaspoon', 'ounce', 'pound', 'gram', 'kilogram', 'milliliter', 'liter', 'pinch', 'slice', 'piece']),
+                        { include_blank: "Select unit", class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" }
+
+        .md:col-span-1
+          = label_tag "recipe[recipe_ingredients_attributes][_NEW_][notes]", "Notes", class: "block text-sm font-medium text-gray-700 mb-1"
+          = text_field_tag "recipe[recipe_ingredients_attributes][_NEW_][notes]",
+                          nil,
+                          { class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500", placeholder: "Optional notes" }

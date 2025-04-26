@@ -1,0 +1,5 @@
+= turbo_stream.replace "user_ingredients" do
+  = render "list", user_ingredients: current_user.user_ingredients.includes(:ingredient).order('ingredients.name')
+= turbo_stream.replace "new_user_ingredient" do
+  = render "form", user_ingredient: UserIngredient.new
+= render_turbo_stream_flash_messages

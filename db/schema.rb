@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_24_044754) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_25_184547) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,7 +23,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_044754) do
   create_table "recipe_ingredients", force: :cascade do |t|
     t.bigint "recipe_id", null: false
     t.bigint "ingredient_id", null: false
-    t.string "raw_text"
+    t.float "quantity"
+    t.string "unit"
+    t.string "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["ingredient_id"], name: "index_recipe_ingredients_on_ingredient_id"
@@ -32,13 +34,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_044754) do
 
   create_table "recipes", force: :cascade do |t|
     t.string "title"
+    t.text "description"
     t.text "instructions"
-    t.integer "cook_time"
-    t.integer "prep_time"
-    t.string "image_url"
-    t.float "rating"
-    t.string "category"
-    t.string "author"
+    t.integer "preparation_time"
+    t.string "difficulty"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -47,9 +46,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_044754) do
     t.bigint "user_id", null: false
     t.bigint "ingredient_id", null: false
     t.float "quantity"
-    t.string "unit"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "unit"
     t.index ["ingredient_id"], name: "index_user_ingredients_on_ingredient_id"
     t.index ["user_id"], name: "index_user_ingredients_on_user_id"
   end

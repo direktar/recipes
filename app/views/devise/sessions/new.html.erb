@@ -2,10 +2,10 @@
 <main class="mx-auto flex min-h-screen w-full items-center justify-center bg-gray-900 text-white">
   <section class="flex w-[30rem] flex-col space-y-10">
 
-    <h2 class="text-center text-4xl font-medium">Log In</h2>
+    <h2 class="text-center text-4xl font-medium">Log In</h2>
 
     <%= form_for(resource, as: resource_name, url: session_path(resource_name),
-                 html: { class: "flex flex-col space-y-8" }) do |f| %>
+                 html: { class: "flex flex-col space-y-8" }, data: { turbo: false }) do |f| %>
 
       <!-- Email -->
       <div class="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500">

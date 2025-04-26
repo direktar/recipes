@@ -1,0 +1,8 @@
+.grid.grid-cols-1.md:grid-cols-2.gap-3
+  - if user_ingredients.any?
+    - user_ingredients.each do |user_ingredient|
+      = render "user_ingredient", user_ingredient: user_ingredient
+  - else
+    .col-span-2.bg-gray-100.rounded-lg.p-4.text-center.text-gray-600
+      You don't have any ingredients in your pantry yet.
+      Add some ingredients to see what recipes you can make!
