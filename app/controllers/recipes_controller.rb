@@ -8,7 +8,7 @@ class RecipesController < ApplicationController
     @recipes = Recipe.all.includes(:ingredients)
 
     if params[:query].present?
-      ingredients = params[:query].split(',').map(&:strip).reject(&:blank?)
+      ingredients = params[:query].split(",").map(&:strip).reject(&:blank?)
 
       if ingredients.any?
         @recipes = ingredients.inject(@recipes) do |scope, ingredient|

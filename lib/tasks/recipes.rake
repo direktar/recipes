@@ -1,13 +1,13 @@
-require 'nokogiri'
-require 'concurrent'
-require 'json'
+require "nokogiri"
+require "concurrent"
+require "json"
 
 namespace :recipes do
   desc "Import recipes from JSON file using multi-threading"
   task import: :environment do
     puts "Starting recipe import with multi-threading..."
 
-    file_path = Rails.root.join('db', 'recipes-en.json')
+    file_path = Rails.root.join("db", "recipes-en.json")
     unless File.exist?(file_path)
       puts "Error: File not found at #{file_path}"
       return
@@ -49,16 +49,16 @@ namespace :recipes do
   private
 
   def process_recipe(recipe_data, successful_imports, created_ingredients, skipped_ingredients)
-    recipe_title = recipe_data['title'] || ''
+    recipe_title = recipe_data["title"] || ""
     if recipe_title.blank?
       puts "Skipping recipe without title: #{recipe_data.inspect[0..100]}..."
       return
     end
 
     preparation_time = nil
-    if recipe_data['prep_time'].present? || recipe_data['cook_time'].present?
-      prep_time = recipe_data['prep_time'].to_i
-      cook_time = recipe_data['cook_time'].to_i
+    if recipe_data["prep_time"].present? || recipe_data["cook_time"].present?
+      prep_time = recipe_data["prep_time"].to_i
+      cook_time = recipe_data["cook_time"].to_i
       preparation_time = prep_time + cook_time if prep_time > 0 || cook_time > 0
     end
 
@@ -68,14 +68,14 @@ namespace :recipes do
       ActiveRecord::Base.transaction do
         recipe = Recipe.create!(
           title: recipe_title,
-          description: recipe_data['description'] || '',
-          instructions: recipe_data['directions'] || '',
+          description: recipe_data["description"] || "",
+          instructions: recipe_data["directions"] || "",
           preparation_time: preparation_time,
-          difficulty: recipe_data['difficulty'] || calculate_difficulty(preparation_time)
+          difficulty: recipe_data["difficulty"] || calculate_difficulty(preparation_time)
         )
 
-        if recipe_data['ingredients'].is_a?(Array)
-          recipe_data['ingredients'].each do |ingredient_text|
+        if recipe_data["ingredients"].is_a?(Array)
+          recipe_data["ingredients"].each do |ingredient_text|
             next if ingredient_text.blank?
 
             quantity, unit, name, notes = parse_ingredient(ingredient_text)
@@ -125,14 +125,14 @@ namespace :recipes do
   end
 
   def calculate_difficulty(prep_time)
-    return 'medium' if prep_time.nil?
+    return "medium" if prep_time.nil?
 
     if prep_time < 30
-      'easy'
+      "easy"
     elsif prep_time < 60
-      'medium'
+      "medium"
     else
-      'hard'
+      "hard"
     end
   end
 
@@ -162,20 +162,20 @@ namespace :recipes do
     return nil if quantity_text.blank?
 
     # Обробка спеціальних символів дробів
-    quantity_text = quantity_text.gsub('½', '1/2')
-                                 .gsub('¼', '1/4')
-                                 .gsub('¾', '3/4')
-                                 .gsub('⅓', '1/3')
-                                 .gsub('⅔', '2/3')
+    quantity_text = quantity_text.gsub("½", "1/2")
+                                 .gsub("¼", "1/4")
+                                 .gsub("¾", "3/4")
+                                 .gsub("⅓", "1/3")
+                                 .gsub("⅔", "2/3")
 
-    if quantity_text.include?('/')
-      if quantity_text.include?(' ')
+    if quantity_text.include?("/")
+      if quantity_text.include?(" ")
         # Мішаний дріб (1 1/2)
-        whole, fraction = quantity_text.split(' ', 2)
-        numerator, denominator = fraction.split('/')
+        whole, fraction = quantity_text.split(" ", 2)
+        numerator, denominator = fraction.split("/")
         return whole.to_f + (numerator.to_f / denominator.to_f)
       else
-        numerator, denominator = quantity_text.split('/')
+        numerator, denominator = quantity_text.split("/")
         return numerator.to_f / denominator.to_f
       end
     end
@@ -187,38 +187,38 @@ namespace :recipes do
     return nil unless unit.present?
 
     case unit.downcase
-    when 'tablespoon', 'tablespoons', 'tbsp', 'tbs'
-      'tablespoon'
-    when 'teaspoon', 'teaspoons', 'tsp'
-      'teaspoon'
-    when 'cup', 'cups'
-      'cup'
-    when 'ounce', 'ounces', 'oz'
-      'ounce'
-    when 'pound', 'pounds', 'lb', 'lbs'
-      'pound'
-    when 'gram', 'grams', 'g'
-      'gram'
-    when 'kilogram', 'kilograms', 'kg'
-      'kilogram'
-    when 'milliliter', 'milliliters', 'ml'
-      'milliliter'
-    when 'liter', 'liters', 'l'
-      'liter'
-    when 'pinch', 'pinches'
-      'pinch'
-    when 'dash', 'dashes'
-      'dash'
-    when 'can', 'cans'
-      'can'
-    when 'package', 'packages'
-      'package'
-    when 'bottle', 'bottles'
-      'bottle'
-    when 'clove', 'cloves'
-      'clove'
-    when 'slice', 'slices'
-      'slice'
+    when "tablespoon", "tablespoons", "tbsp", "tbs"
+      "tablespoon"
+    when "teaspoon", "teaspoons", "tsp"
+      "teaspoon"
+    when "cup", "cups"
+      "cup"
+    when "ounce", "ounces", "oz"
+      "ounce"
+    when "pound", "pounds", "lb", "lbs"
+      "pound"
+    when "gram", "grams", "g"
+      "gram"
+    when "kilogram", "kilograms", "kg"
+      "kilogram"
+    when "milliliter", "milliliters", "ml"
+      "milliliter"
+    when "liter", "liters", "l"
+      "liter"
+    when "pinch", "pinches"
+      "pinch"
+    when "dash", "dashes"
+      "dash"
+    when "can", "cans"
+      "can"
+    when "package", "packages"
+      "package"
+    when "bottle", "bottles"
+      "bottle"
+    when "clove", "cloves"
+      "clove"
+    when "slice", "slices"
+      "slice"
     else
       unit.downcase
     end

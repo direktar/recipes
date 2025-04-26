@@ -3,7 +3,7 @@ class UserIngredientsController < ApplicationController
   before_action :set_user_ingredient, only: [:destroy, :update]
 
   def index
-    @user_ingredients = current_user.user_ingredients.includes(:ingredient).order('ingredients.name')
+    @user_ingredients = current_user.user_ingredients.includes(:ingredient).order("ingredients.name")
     @ingredients = Ingredient.order(:name)
     @user_ingredient = UserIngredient.new
   end

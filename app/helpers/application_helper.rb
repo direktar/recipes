@@ -21,5 +21,4 @@ module ApplicationHelper
       render partial: "shared/flash"
     end
   end
-
 end
