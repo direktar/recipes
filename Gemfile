@@ -11,6 +11,10 @@ gem "tailwindcss-rails"
 gem "jbuilder"
 gem "devise", "~> 4.9"
 gem "pagy", "~> 6.1"
+gem "searchkick"
+gem "elasticsearch", "~> 7.17.7"
+gem "redis", "~> 4.8"
+
 
 # gem "bcrypt", "~> 3.1.7"
 

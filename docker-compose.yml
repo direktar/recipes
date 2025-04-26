@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: recipes_development
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  elasticsearch:
+    image: elasticsearch:7.17.9
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:9200"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:6.2
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+
+  web:
+    build: .
+    volumes:
+      - .:/app
+      - gem_cache:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/recipes_development
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      REDIS_URL: redis://redis:6379/0
+      RAILS_ENV: development
+      WEBPACKER_DEV_SERVER_HOST: webpacker
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
+  elasticsearch_data:
+  redis_data:
+  gem_cache:
