@@ -1,4 +1,4 @@
-FROM ruby:3.4.2
+FROM ruby:3.4.3
 
 # Встановлення необхідних системних залежностей
 RUN apt-get update -qq && apt-get install -y \
