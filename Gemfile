@@ -11,9 +11,10 @@ gem "tailwindcss-rails"
 gem "jbuilder"
 gem "devise", "~> 4.9"
 gem "pagy", "~> 6.1"
-gem "searchkick"
 gem "elasticsearch", "~> 7.17.7"
 gem "redis", "~> 4.8"
+gem "active_attr"
+gem "searchkick", "~> 5.5", ">= 5.5.1"
 
 
 # gem "bcrypt", "~> 3.1.7"
@@ -33,10 +34,12 @@ gem "thruster", require: false
 group :development, :test do
   gem "bullet", "~> 8.0", ">= 8.0.5"
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+  gem 'factory_bot_rails', '~> 6.4', '>= 6.4.4'
+  gem "pry-rails"
   gem "brakeman", require: false
 
   gem "rubocop-rails-omakase", require: false
-  gem "rspec", "~> 3.13"
+  gem 'rspec-rails', '~> 6.1.0'
 end
 
 group :development do
@@ -51,5 +54,7 @@ end
 
 group :test do
   gem "capybara"
+  gem 'database_cleaner-active_record'
+  gem 'database_cleaner-redis'
   gem "selenium-webdriver"
 end

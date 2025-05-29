@@ -6,7 +6,6 @@ end
 puts "🌱 Starting seed data generation..."
 
 puts "Cleaning up existing user data..."
-UserIngredient.destroy_all
 User.destroy_all
 
 DEMO_EMAIL = "demo@example.com"
@@ -19,22 +18,10 @@ User.create!(
 )
 puts "✅ Demo user created: #{DEMO_EMAIL} / #{DEMO_PASS}"
 
-5.times do |i|
-  email = "user#{i+1}@example.com"
-  password = DEMO_PASS
-
-  User.create!(
-    email: email,
-    password: password,
-    password_confirmation: password
-  )
-  puts "👤 Created random user: #{email} / #{password}"
-end
-
 ingredient_ids = Ingredient.pluck(:id)
 
 User.find_each do |user|
-  num_ingredients = rand(50..70)
+  num_ingredients = rand(1..200)
 
   selected_ingredient_ids = ingredient_ids.sample(num_ingredients)
 
@@ -60,5 +47,5 @@ total_user_ingredients = UserIngredient.count
 
 puts "\n🎉 Seed completed successfully!"
 puts "📊 Summary:"
-puts "  - Users: #{total_users}"
+puts "  - Users: #{total_users}, with #{total_user_ingredients} user ingredients"
 puts "  - Total ingredients: #{total_ingredients}"

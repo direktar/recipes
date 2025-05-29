@@ -5,52 +5,27 @@ class RecipesController < ApplicationController
 
   # GET /recipes or /recipes.json
   def index
-    @recipes = Recipe.all.includes(:ingredients)
+    @search_form = RecipeSearchForm.new(query: params[:query])
 
-    if params[:query].present?
-      ingredients = params[:query].split(",").map(&:strip).reject(&:blank?)
-
-      if ingredients.any?
-        @recipes = ingredients.inject(@recipes) do |scope, ingredient|
-          scope.joins(:ingredients)
-               .where("
-               ingredients.name ILIKE ? OR
-               ingredients.name ILIKE ? OR
-               ingredients.name ILIKE ? OR
-               ingredients.name ILIKE ?
-             ",
-               ingredient,
-               "#{ingredient} %",
-               "% #{ingredient}",
-               "% #{ingredient} %"
-          )
-        end.distinct
-      end
+    if request.get? && params[:query].present? && !@search_form.valid?
+      @recipes = Recipe.all.includes(:ingredients)
+      flash.now[:alert] = @search_form.errors.full_messages.join(", ")
+    else
+      @recipes = RecipeSearchService.call(params, current_user)
     end
 
-    @pagy, @recipes = pagy(@recipes)
+    begin
+      @pagy, @recipes = pagy(@recipes)
+    rescue Pagy::OverflowError
+      # Handle page overflow by redirecting to the first page
+      redirect_to(url_for(page: 1)) and return
+    end
 
     respond_to do |format|
       format.html
       format.turbo_stream
     end
   end
-
-  # GET /recipes/my_ingredients
-  def my_ingredients
-    @recipes = Recipe.find_by_user_ingredients(current_user)
-
-    if @recipes.empty?
-      flash.now[:notice] = "You don't have enough ingredients to make any recipes. Add more ingredients to your pantry!"
-    end
-
-    @pagy, @recipes = pagy(@recipes)
-    respond_to do |format|
-      format.html { render :index }
-      format.turbo_stream { render :index }
-    end
-  end
-
 
   # GET /recipes/1 or /recipes/1.json
   def show

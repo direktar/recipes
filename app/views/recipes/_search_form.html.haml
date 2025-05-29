@@ -1,0 +1,25 @@
+= form_with(model: search_form, url: recipes_path,
+                                method: :get,
+                                data: { controller: "search",
+                                        action: "keydown->search#handleKey",
+                                        turbo_frame: "recipes-list" },
+                                class: "flex-1") do |f|
+  .flex.flex-col.gap-2
+    = f.text_field :query, placeholder: "Search by ingredients (comma separated)...",
+                  class: "w-full px-4 py-2 border rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+    .text-xs.text-gray-500.ml-1
+      Example: "pasta, tomato, cheese" to find recipes containing ALL these ingredients
+    - if flash[:alert]
+      .text-xs.text-red-500.ml-1
+        = flash[:alert]
+    .mt-2.flex.gap-2.flex-wrap
+      = f.submit "Search", class: "px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+      - if user_signed_in?
+        = link_to recipes_path(use_my_ingredients: true), class: "px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-1" do
+          %svg.h-4.w-4{xmlns: "http://www.w3.org/2000/svg", fill: "none", viewbox: "0 0 24 24", stroke: "currentColor"}
+            %path{stroke: "currentColor", 'stroke-linecap': "round", 'stroke-linejoin': "round", 'stroke-width': "2", d: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"}
+          Cook with all my ingredients
+        = link_to user_ingredients_path, class: "px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition flex items-center gap-1", data: { turbo: false } do
+          %svg.h-4.w-4{xmlns: "http://www.w3.org/2000/svg", fill: "none", viewbox: "0 0 24 24", stroke: "currentColor"}
+            %path{stroke: "currentColor", 'stroke-linecap': "round", 'stroke-linejoin': "round", 'stroke-width': "2", d: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"}
+          My Pantry

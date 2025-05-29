@@ -155,7 +155,37 @@ namespace :recipes do
       notes = match[2]&.strip
     end
 
+    name = normalize_ingredient_name(name) if name.present?
+
     [quantity, unit, name, notes]
+  end
+
+  def normalize_ingredient_name(name)
+    return nil if name.blank?
+
+    # Видаляємо прикметники та зайві слова
+    result = name.downcase
+                 .gsub(/fresh|frozen|cold|hot|warm|room temperature|chilled|finely|coarsely|thinly|thickly|diced|minced|chopped|sliced|grated|shredded|cubed|crushed|whole|halved|quartered/, '')
+                 .gsub(/\(.*?\)/, '')   # Видаляємо все у дужках
+                 .gsub(/\d+/, '')        # Видаляємо числа
+                 .gsub(/[^\w\s]/, '')    # Видаляємо спеціальні символи
+                 .split.reject do |word|
+      # Видаляємо зайві слова, які не є важливими для пошуку
+      %w(and or to for with of at the a an).include?(word)
+    end.join(' ').strip
+
+    # Приводимо до однини деякі слова
+    result = result.gsub(/(\w+)(es|s)$/) do |match|
+      if $2 == 'es' && %w(tomatoes potatoes).include?(match)
+        match.gsub(/es$/, '')
+      elsif $2 == 's' && !%w(cheese swiss beans peas lens rice).include?(match)
+        $1
+      else
+        match
+      end
+    end
+
+    result.strip
   end
 
   def parse_quantity(quantity_text)

@@ -31,16 +31,4 @@ class User < ApplicationRecord
       ui.unit = unit if ui.respond_to?(:unit=)
     end
   end
-
-  def remove_ingredient(ingredient)
-    user_ingredients.where(ingredient: ingredient).destroy_all
-  end
-
-  def has_ingredient?(ingredient)
-    ingredients.include?(ingredient)
-  end
-
-  def recipes_i_can_make
-    Recipe.find_by_user_ingredients(self)
-  end
 end
