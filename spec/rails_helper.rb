@@ -70,5 +70,4 @@ RSpec.configure do |config|
   config.before(:suite) do
     Recipe.reindex
   end
-
 end

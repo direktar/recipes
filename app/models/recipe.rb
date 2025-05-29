@@ -34,5 +34,4 @@ class Recipe < ApplicationRecord
       "Time not specified"
     end
   end
-
 end

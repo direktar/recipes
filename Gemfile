@@ -34,12 +34,12 @@ gem "thruster", require: false
 group :development, :test do
   gem "bullet", "~> 8.0", ">= 8.0.5"
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
-  gem 'factory_bot_rails', '~> 6.4', '>= 6.4.4'
+  gem "factory_bot_rails", "~> 6.4", ">= 6.4.4"
   gem "pry-rails"
   gem "brakeman", require: false
 
   gem "rubocop-rails-omakase", require: false
-  gem 'rspec-rails', '~> 6.1.0'
+  gem "rspec-rails", "~> 6.1.0"
 end
 
 group :development do
@@ -54,7 +54,7 @@ end
 
 group :test do
   gem "capybara"
-  gem 'database_cleaner-active_record'
-  gem 'database_cleaner-redis'
+  gem "database_cleaner-active_record"
+  gem "database_cleaner-redis"
   gem "selenium-webdriver"
 end

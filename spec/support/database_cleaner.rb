@@ -37,4 +37,3 @@ RSpec.configure do |config|
     DatabaseCleaner[:active_record].strategy = :transaction
   end
 end
-
