@@ -10,3 +10,8 @@
 **As** a user
 **I want** to see a message indicating that I don't have enough ingredients to make any recipes
 **So that** I understand I need to add ingredients or change my search criteria
+
+### Credentials for test:
+**User:** demo@example.com
+
+**Password:** password123
