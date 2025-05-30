@@ -33,7 +33,7 @@ gem "thruster", require: false
 # gem "image_processing", "~> 1.2"
 
 group :development, :test do
-  gem "bullet", "~> 8.0", ">= 8.0.5"
+  gem "bullet", "~> 8.0"
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "factory_bot_rails", "~> 6.4", ">= 6.4.4"
   gem "pry-rails"
