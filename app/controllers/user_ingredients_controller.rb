@@ -52,6 +52,13 @@ class UserIngredientsController < ApplicationController
     end
   end
 
+  def destroy_all
+    current_user.ingredients.destroy_all
+
+    redirect_to user_ingredients_path, notice: "All ingredients were successfully removed from your pantry."
+  end
+
+
   private
 
   def set_user_ingredient

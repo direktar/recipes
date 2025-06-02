@@ -11,19 +11,8 @@ class RecipesController < ApplicationController
       @recipes = Recipe.all.includes(:ingredients)
       flash.now[:alert] = @search_form.errors.full_messages.join(", ")
     else
-      @recipes = RecipeSearchService.call(params, current_user)
-    end
-
-    begin
-      @pagy, @recipes = pagy(@recipes)
-    rescue Pagy::OverflowError
-      # Handle page overflow by redirecting to the first page
-      redirect_to(url_for(page: 1)) and return
-    end
-
-    respond_to do |format|
-      format.html
-      format.turbo_stream
+      recipes = RecipeSearchService.call(params, current_user)
+      @pagy, @recipes = pagy_searchkick(recipes, items: Pagy::DEFAULT[:items])
     end
   end
 

@@ -15,10 +15,15 @@
 
   .bg-white.shadow.rounded-lg.overflow-hidden.mb-6
     .p-6
+      = link_to "Delete all ingredients", destroy_all_user_ingredients_path,
+        class: "px-4 py-2 bg-red-600 rounded hover:bg-red-600 transition flex items-center",
+        data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }
       .mb-6
         %h2.text-xl.font-semibold.text-gray-800.mb-4 Add New Ingredient
         = render "form", user_ingredient: @user_ingredient
-      = link_to recipes_path(use_my_ingredients: true), class: "px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-1" do
+
+      = link_to recipes_path(use_my_ingredients: true),
+                class: "px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-1" do
         %svg.h-4.w-4{xmlns: "http://www.w3.org/2000/svg", fill: "none", viewbox: "0 0 24 24", stroke: "currentColor"}
           %path{stroke: "currentColor", 'stroke-linecap': "round", 'stroke-linejoin': "round", 'stroke-width': "2", d: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"}
         Cook with all my ingredients

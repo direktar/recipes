@@ -12,6 +12,7 @@
 #  updated_at       :datetime         not null
 #
 class Recipe < ApplicationRecord
+  extend Pagy::Searchkick
   searchkick callbacks: :async
 
   has_many :recipe_ingredients, dependent: :destroy

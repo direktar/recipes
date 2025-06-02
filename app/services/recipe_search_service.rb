@@ -26,9 +26,14 @@ class RecipeSearchService
     ingredients = query.split(",").map(&:strip).reject(&:blank?)
     if ingredients.any?
       lowercase_ingredients = ingredients.map(&:downcase)
-      Recipe.search("*", where: {
-        ingredients_lowercase: { all: lowercase_ingredients }
-      })
+      pagy_recipes = Recipe.pagy_search(
+        "*",
+        where: {
+          ingredients_lowercase: { all: lowercase_ingredients }
+        },
+        load: true
+      )
+      pagy_recipes.includes(:ingredients)
     else
       default_recipes
     end
@@ -43,14 +48,18 @@ class RecipeSearchService
         (recipe.ingredients_lowercase - user_ingredient_names.map(&:downcase)).empty?
       end.map(&:id)
 
-      Recipe.where(id: filtered_recipe_ids).includes(:ingredients)
+      Recipe.pagy_search(
+        where: { id: filtered_recipe_ids },
+        includes: [:ingredients]
+      )
     else
-      Recipe.none
+      Recipe.pagy_search("*", where: { id: [] })
     end
   end
 
 
+
   def default_recipes
-    Recipe.all.includes(:ingredients)
+    Recipe.pagy_search("*", load: true).includes(:ingredients)
   end
 end
