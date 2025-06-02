@@ -88,26 +88,26 @@ builder:
 accessories:
   postgres:
     host: <%= ENV["HOST_IP"] %>
-    port: '5432:5432'
+    port: '10.0.0.2:5432:5432'
     image: postgres:16-alpine
+    directories:
+      - postgres:/var/lib/postgresql/data
     env:
       clear:
         DB_USER: <%= ENV["DB_USER"] %>
         DB_PASSWORD: <%= ENV["DB_PASSWORD"] %>
         DB_NAME: <%= ENV["DB_NAME"] %>
-    directories:
-      - postgres:/var/lib/postgresql/data
 
   redis:
     host: <%= ENV["HOST_IP"] %>
-    port: '6379:6379'
+    port: '10.0.0.2:6379:6379'
     image: redis:8.0.1-alpine
     directories:
       - redis:/data
 
   elasticsearch:
     host: <%= ENV["HOST_IP"] %>
-    port: '9200:9200'
+    port: '10.0.0.2:9200:9200'
     image: elasticsearch:8.16.0
     env:
       clear:
