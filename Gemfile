@@ -14,7 +14,7 @@ gem "jbuilder"
 gem "devise", "~> 4.9"
 gem "pagy", "~> 6.1"
 gem "elasticsearch", "~> 7.17.7"
-gem "redis", "~> 4.8"
+gem "redis", "~> 5.4"
 gem "active_attr"
 gem "searchkick", "~> 5.5", ">= 5.5.1"
 
